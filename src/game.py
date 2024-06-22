@@ -39,6 +39,9 @@ class NestedTicTacToe:
         self.winner = None
 
     def make_move(self, main_x, main_y, sub_x, sub_y):
+        if not self.is_valid_move(main_x, main_y, sub_x, sub_y):
+            return False
+
         if self.boards[main_x][main_y].make_move(sub_x, sub_y, self.current_player):
             if self.boards[main_x][main_y].winner:
                 self.main_board.make_move(main_x, main_y, self.current_player)
@@ -49,6 +52,14 @@ class NestedTicTacToe:
                 self.winner = self.main_board.winner
             return True
         return False
+
+    def is_valid_move(self, main_x, main_y, sub_x, sub_y):
+        # 如果目标小棋盘已满且没有赢家，允许自由选择
+        if self.boards[self.current_board[0]][self.current_board[1]].is_full():
+            return True
+        # 否则，只能在指定的小棋盘内落子
+        return (main_x == self.current_board[0] and main_y == self.current_board[1]) and \
+               self.boards[main_x][main_y].board[sub_x][sub_y] == ' '
 
     def check_winner(self):
         return self.main_board.winner
@@ -61,6 +72,7 @@ class NestedTicTacToe:
 
     def get_legal_actions(self):
         legal_actions = []
+        # 检查当前目标小棋盘是否已满
         if not self.boards[self.current_board[0]][self.current_board[1]].is_full():
             for x in range(3):
                 for y in range(3):
